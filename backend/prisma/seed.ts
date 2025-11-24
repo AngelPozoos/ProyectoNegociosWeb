@@ -31,7 +31,7 @@ async function main() {
             sku: 'TECH-AUD-003',
             stock: 80,
             categoria: 'Audio',
-            imagenes: 'https://m.media-amazon.com/images/I/61ULAZmt9NL._AC_SX522_.jpg',
+            imagenes: 'https://www.wirelessplace.com/cdn/shop/files/103379_original_local_1200x1050_v3_converted_800x700.webp?v=1725380739',
         },
         {
             nombre: 'Apple Watch Series 10 42 mm',
@@ -40,35 +40,35 @@ async function main() {
             sku: 'TECH-WCH-004',
             stock: 30,
             categoria: 'Wearables',
-            imagenes: 'https://www.macstoreonline.com.mx/img/sku/WATCH454_Z1.webp',
+            imagenes: 'https://www.applex.com.bd/cdn/shop/files/Apple_Watch_Series_10_Silver_1.webp?v=1738426312&width=1946',
         },
         {
-            nombre: 'Monitor 4K UltraWide',
-            descripcion: '34 pulgadas, panel IPS, tasa de refresco de 144Hz. Perfecto para productividad.',
-            precio: 12500.00,
+            nombre: 'Monitor Gamer ASUS 4K UltraWide',
+            descripcion: 'Monitor curvo WQHD (3440x1440) 1500R de 34 pulgadas con frecuencia de actualización ultrarrápida de 165Hz diseñado para jugadores profesionales y juegos inmersivos',
+            precio: 8500.00,
             sku: 'TECH-MON-005',
             stock: 20,
             categoria: 'Periféricos',
-            imagenes: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80',
+            imagenes: 'https://dlcdnwebimgs.asus.com/gain/221f99c6-cbe7-473e-a23a-4b7295b651c8/1725380739/1725380739_1200x1050_v3_converted_800x700.webp',
         },
         {
-            nombre: 'Teclado Mecánico RGB',
-            descripcion: 'Switches Cherry MX Blue, retroiluminación personalizable y chasis de aluminio.',
+            nombre: 'Teclado HyperX Alloy Origins 65',
+            descripcion: 'Teclado mecánico para gaming duradero y extremadamente portátil con factor de forma al 65 % que brinda más espacio para mover el mouse con gran alcance.',
             precio: 3200.00,
             sku: 'TECH-KBD-006',
             stock: 75,
             categoria: 'Periféricos',
-            imagenes: 'https://ddtech.mx/assets/uploads/f35597eb88a3427b1400ebaee8a1034f.png',
+            imagenes: 'https://hp.widen.net/content/7gz8jlzkar/png/7gz8jlzkar.png?w=800&h=600&dpi=72&color=ffffff00',
         }
     ];
 
-        for (const product of products) {
+    for (const product of products) {
         await prisma.producto.upsert({
             where: { sku: product.sku },
             create: product,
             update: product,  // aquí se actualizan nombre, descripcion, imagenes, etc.
         });
-        }
+    }
 
     // Create a test user for checkout
     const testUser = await prisma.usuario.findUnique({ where: { email: 'test@example.com' } });

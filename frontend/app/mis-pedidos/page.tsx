@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import { formatPrice } from '@/lib/formatPrice';
 
 interface Order {
     id: string;
@@ -47,8 +48,8 @@ export default function OrdersPage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-8 text-primary">Mis Pedidos</h1>
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 py-8 max-w-7xl">
+            <h1 className="text-3xl font-bold mb-10 text-primary">Mis Pedidos</h1>
 
             {orders.length === 0 ? (
                 <div className="text-center text-gray-500 py-12">No tienes pedidos aún.</div>
@@ -56,18 +57,18 @@ export default function OrdersPage() {
                 <div className="space-y-6">
                     {orders.map((order) => (
                         <div key={order.id} className="bg-white border rounded-lg shadow-sm overflow-hidden">
-                            <div className="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
+                            <div className="bg-primary px-6 py-4 border-b flex justify-between items-center">
                                 <div>
-                                    <span className="text-sm text-gray-500 block">Pedido Realizado</span>
-                                    <span className="font-medium">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                    <span className="text-sm text-white/80 block">Pedido Realizado</span>
+                                    <span className="font-medium text-white">{new Date(order.createdAt).toLocaleDateString()}</span>
                                 </div>
                                 <div>
-                                    <span className="text-sm text-gray-500 block">Total</span>
-                                    <span className="font-medium">${Number(order.total).toFixed(2)}</span>
+                                    <span className="text-sm text-white/80 block">Total</span>
+                                    <span className="font-medium text-white">{formatPrice(order.total)}</span>
                                 </div>
                                 <div>
-                                    <span className="text-sm text-gray-500 block">Pedido #</span>
-                                    <span className="font-medium">{order.id.slice(0, 8)}</span>
+                                    <span className="text-sm text-white/80 block">Pedido #</span>
+                                    <span className="font-medium text-white">{order.id.slice(0, 8)}</span>
                                 </div>
                             </div>
                             <div className="p-6">
@@ -87,7 +88,7 @@ export default function OrdersPage() {
                                             </div>
                                         ) : null}
                                         <button
-                                            className="btn btn-secondary text-sm mt-2"
+                                            className="btn btn-primary text-sm mt-2"
                                             onClick={() => handleViewDetails(order.id)}
                                         >
                                             Ver Detalles

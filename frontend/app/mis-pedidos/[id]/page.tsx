@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { CreditCard, Calendar } from 'lucide-react';
 import api from '@/lib/api';
+import { useNotification } from '@/app/context/NotificationContext';
+import { formatPrice } from '@/lib/formatPrice';
 
 interface Product {
     id: string;
@@ -25,6 +28,7 @@ interface ShippingAddress {
     codigoPostal: string;
     pais: string;
     metodoPago: string;
+    nombreTitular?: string;
 }
 
 interface Shipment {
@@ -50,6 +54,7 @@ export default function OrderDetailsPage() {
     const router = useRouter();
     const params = useParams();
     const orderId = params.id as string;
+    const { showNotification, showConfirm } = useNotification();
 
     useEffect(() => {
         if (orderId) {
@@ -66,7 +71,13 @@ export default function OrderDetailsPage() {
     }, [orderId]);
 
     const handleCancelOrder = async () => {
-        if (!confirm('¿Estás seguro de que deseas cancelar este pedido?')) {
+        const confirmed = await showConfirm({
+            title: '¿Estás seguro de que deseas cancelar este pedido?',
+            confirmText: 'Aceptar',
+            cancelText: 'Cancelar',
+        });
+
+        if (!confirmed) {
             return;
         }
 
@@ -74,10 +85,16 @@ export default function OrderDetailsPage() {
         try {
             const res = await api.patch(`/transactional/${orderId}/cancel`);
             setOrder(res.data);
-            alert('Pedido cancelado exitosamente');
+            showNotification({
+                type: 'success',
+                title: 'Pedido cancelado exitosamente',
+            });
         } catch (err) {
             console.error('Failed to cancel order', err);
-            alert('Error al cancelar el pedido');
+            showNotification({
+                type: 'error',
+                title: 'Error al cancelar el pedido',
+            });
         } finally {
             setCancelling(false);
         }
@@ -138,7 +155,7 @@ export default function OrderDetailsPage() {
             </div>
 
             {/* Order Summary Card */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="bg-white rounded-lg shadow-md border p-6 mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     <div>
                         <span className="text-sm text-gray-500 block">Número de Pedido</span>
@@ -150,7 +167,7 @@ export default function OrderDetailsPage() {
                     </div>
                     <div>
                         <span className="text-sm text-gray-500 block">Total</span>
-                        <span className="font-semibold text-xl">${Number(order.total).toFixed(2)}</span>
+                        <span className="font-semibold text-xl">{formatPrice(order.total)}</span>
                     </div>
                     <div>
                         <span className="text-sm text-gray-500 block">Estado</span>
@@ -162,7 +179,7 @@ export default function OrderDetailsPage() {
             </div>
 
             {/* Order Items */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="bg-white rounded-lg shadow-md border p-6 mb-6">
                 <h2 className="text-xl font-bold mb-4 text-primary">Artículos del Pedido</h2>
                 <div className="space-y-4">
                     {order.items.map((item) => {
@@ -179,10 +196,10 @@ export default function OrderDetailsPage() {
                                 <div className="flex-1">
                                     <h3 className="font-semibold text-lg">{item.producto.nombre}</h3>
                                     <p className="text-sm text-gray-600">Cantidad: {item.cantidad}</p>
-                                    <p className="text-sm text-gray-600">Precio unitario: ${Number(item.precio).toFixed(2)}</p>
+                                    <p className="text-sm text-gray-600">Precio unitario: {formatPrice(item.precio)}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-semibold text-lg">${(Number(item.precio) * item.cantidad).toFixed(2)}</p>
+                                    <p className="font-semibold text-lg">{formatPrice(Number(item.precio) * item.cantidad)}</p>
                                 </div>
                             </div>
                         );
@@ -194,14 +211,17 @@ export default function OrderDetailsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 {/* Payment Method */}
                 {order.direccionEnvio && (
-                    <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="bg-white rounded-lg shadow-md border p-6">
                         <h2 className="text-xl font-bold mb-4 text-primary">Método de Pago</h2>
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white text-xl">
-                                💳
+                            <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white">
+                                <CreditCard className="w-6 h-6" />
                             </div>
                             <div>
                                 <p className="font-semibold text-lg">{getPaymentMethodLabel(order.direccionEnvio.metodoPago)}</p>
+                                {order.direccionEnvio.nombreTitular && (
+                                    <p className="text-sm text-gray-600">Titular: {order.direccionEnvio.nombreTitular}</p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -209,11 +229,11 @@ export default function OrderDetailsPage() {
 
                 {/* Shipping Date */}
                 {order.envio?.fechaEstimadaEntrega && (
-                    <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="bg-white rounded-lg shadow-md border p-6">
                         <h2 className="text-xl font-bold mb-4 text-primary">Fecha de Envío Programada</h2>
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl">
-                                📅
+                            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white">
+                                <Calendar className="w-6 h-6" />
                             </div>
                             <div>
                                 <p className="font-semibold text-lg">
@@ -237,7 +257,7 @@ export default function OrderDetailsPage() {
 
             {/* Shipping Address */}
             {order.direccionEnvio && (
-                <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div className="bg-white rounded-lg shadow-md border p-6 mb-6">
                     <h2 className="text-xl font-bold mb-4 text-primary">Dirección de Envío</h2>
                     <div className="space-y-1">
                         <p className="text-gray-700">{order.direccionEnvio.calle}</p>
@@ -251,7 +271,7 @@ export default function OrderDetailsPage() {
 
             {/* Cancel Button */}
             {canCancelOrder && (
-                <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="bg-white rounded-lg shadow-md border p-6">
                     <h2 className="text-xl font-bold mb-4 text-primary">Acciones</h2>
                     <button
                         onClick={handleCancelOrder}

@@ -6,4 +6,13 @@ export class CreateOrderDto {
         address: string;
         estimatedDelivery?: string; // ISO Date string
     };
+    direccionEnvio?: {
+        calle: string;
+        ciudad: string;
+        estado: string;
+        codigoPostal: string;
+        pais: string;
+        metodoPago: string;
+        nombreTitular?: string;
+    };
 }

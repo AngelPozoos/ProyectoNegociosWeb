@@ -3,13 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCart } from '@/app/context/CartContext';
+import { useNotification } from '@/app/context/NotificationContext';
 import api from '@/lib/api';
 import Link from 'next/link';
+import { formatPrice } from '@/lib/formatPrice';
 
 export default function ShippingPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { cart, getTotalPrice, clearCart } = useCart();
+    const { showNotification } = useNotification();
 
     const [calle, setCalle] = useState('');
     const [ciudad, setCiudad] = useState('');
@@ -19,15 +22,18 @@ export default function ShippingPage() {
     const [deliveryDate, setDeliveryDate] = useState('');
     const [loading, setLoading] = useState(false);
     const [paymentId, setPaymentId] = useState<string | null>(null);
+    const [cardholderName, setCardholderName] = useState('');
 
     useEffect(() => {
         const pid = searchParams.get('paymentId');
+        const name = searchParams.get('cardholderName');
         if (!pid) {
             // If no payment ID, redirect back to checkout
             router.push('/checkout');
             return;
         }
         setPaymentId(pid);
+        if (name) setCardholderName(decodeURIComponent(name));
     }, [searchParams, router]);
 
     if (cart.length === 0) {
@@ -46,7 +52,10 @@ export default function ShippingPage() {
         e.preventDefault();
 
         if (!calle || !ciudad || !estado || !codigoPostal || !pais || !deliveryDate) {
-            alert('Por favor completa todos los campos de envío');
+            showNotification({
+                type: 'warning',
+                title: 'Por favor completa todos los campos de envío',
+            });
             return;
         }
 
@@ -73,6 +82,8 @@ export default function ShippingPage() {
                     estado,
                     codigoPostal,
                     pais,
+                    metodoPago: method === 'paypal' ? 'PAYPAL' : 'TARJETA_CREDITO',
+                    nombreTitular: cardholderName || undefined,
                 }
             };
 
@@ -90,13 +101,19 @@ export default function ShippingPage() {
             }
 
             console.log('Order created successfully:', response.data);
-            alert('¡Pedido completado con éxito!');
+            showNotification({
+                type: 'success',
+                title: '¡Pedido completado con éxito!',
+            });
             clearCart();
             router.push('/mis-pedidos');
         } catch (error: any) {
             console.error('Order creation failed:', error);
             const errorMessage = error.response?.data?.message || 'Error al crear el pedido';
-            alert(errorMessage);
+            showNotification({
+                type: 'error',
+                title: errorMessage,
+            });
         } finally {
             setLoading(false);
         }
@@ -119,7 +136,7 @@ export default function ShippingPage() {
                 </div>
                 <div className="flex justify-between font-bold text-lg">
                     <span>Total Pagado</span>
-                    <span>${getTotalPrice().toFixed(2)}</span>
+                    <span>{formatPrice(getTotalPrice())}</span>
                 </div>
                 <div className="mt-2 text-xs text-green-600 flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

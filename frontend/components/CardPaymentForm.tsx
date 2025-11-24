@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useNotification } from '@/app/context/NotificationContext';
 
 interface CardPaymentFormProps {
-    onApprove: (orderId: string) => Promise<void>;
+    onApprove: (orderId: string, cardholderName: string) => Promise<void>;
     onError: (error: any) => void;
     amount: number;
     disabled?: boolean;
@@ -15,12 +16,16 @@ export default function CardPaymentForm({ onApprove, onError, amount, disabled }
     const [expiry, setExpiry] = useState('');
     const [cvv, setCvv] = useState('');
     const [cardholderName, setCardholderName] = useState('');
+    const { showNotification } = useNotification();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!cardNumber || !expiry || !cvv || !cardholderName) {
-            alert('Por favor completa todos los campos de la tarjeta');
+            showNotification({
+                type: 'warning',
+                title: 'Por favor completa todos los campos de la tarjeta',
+            });
             return;
         }
 
@@ -36,7 +41,7 @@ export default function CardPaymentForm({ onApprove, onError, amount, disabled }
 
             // Pass a fake order ID to the parent component
             // The parent component will then create the order in our local DB
-            await onApprove('DEMO-ORDER-' + Date.now());
+            await onApprove('DEMO-ORDER-' + Date.now(), cardholderName);
 
         } catch (error) {
             console.error('Card payment error:', error);

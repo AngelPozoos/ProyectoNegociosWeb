@@ -4,25 +4,31 @@ import { useState } from 'react';
 import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/app/context/CartContext';
+import { useNotification } from '@/app/context/NotificationContext';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import CardPaymentForm from '@/components/CardPaymentForm';
+import { formatPrice } from '@/lib/formatPrice';
 
 type PaymentMethod = 'card' | 'paypal';
 
 export default function PaymentPage() {
     const router = useRouter();
     const { cart, getTotalPrice } = useCart();
+    const { showNotification } = useNotification();
     const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
 
-    const handleCardApprove = async (orderId: string) => {
+    const handleCardApprove = async (orderId: string, cardholderName: string) => {
         // Redirect to shipping page with payment details
-        router.push(`/checkout/shipping?paymentId=${orderId}&method=card`);
+        router.push(`/checkout/shipping?paymentId=${orderId}&method=card&cardholderName=${encodeURIComponent(cardholderName)}`);
     };
 
     const handleCardError = (error: any) => {
         console.error('Card error:', error);
-        alert('Error en el pago con tarjeta. Por favor, intenta de nuevo.');
+        showNotification({
+            type: 'error',
+            title: 'Error en el pago con tarjeta. Por favor, intenta de nuevo.',
+        });
     };
 
     const createPayPalOrder = async () => {
@@ -58,7 +64,7 @@ export default function PaymentPage() {
                 <h2 className="text-xl font-semibold mb-4">Resumen</h2>
                 <div className="flex justify-between font-bold text-lg">
                     <span>Total a Pagar</span>
-                    <span>${getTotalPrice().toFixed(2)}</span>
+                    <span>{formatPrice(getTotalPrice())}</span>
                 </div>
             </div>
 
@@ -121,7 +127,10 @@ export default function PaymentPage() {
                                     onApprove={onPayPalApprove}
                                     onError={(err) => {
                                         console.error('PayPal error:', err);
-                                        alert('Error con PayPal. Por favor, intenta de nuevo.');
+                                        showNotification({
+                                            type: 'error',
+                                            title: 'Error con PayPal. Por favor, intenta de nuevo.',
+                                        });
                                     }}
                                     disabled={loading}
                                     style={{ layout: 'vertical' }}

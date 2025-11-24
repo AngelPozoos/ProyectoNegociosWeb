@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCart } from '@/app/context/CartContext';
 import { Minus, Plus, ShoppingCart, ArrowRight, X } from 'lucide-react';
+import { formatPrice } from '@/lib/formatPrice';
 
 interface Product {
     id: string;
@@ -108,7 +109,7 @@ export default function ProductPage() {
                     </div>
                     <div>
                         <h1 className="text-4xl font-bold text-primary mb-4">{product.nombre}</h1>
-                        <p className="text-xl text-accent font-semibold mb-4">${Number(product.precio).toFixed(2)}</p>
+                        <p className="text-xl text-accent font-semibold mb-4">{formatPrice(product.precio)}</p>
                         <p className="text-gray-600 mb-6 leading-relaxed">{product.descripcion}</p>
 
                         <div className="grid grid-cols-2 gap-4 mb-6 text-sm text-gray-500">

@@ -3,6 +3,7 @@
 import { useCart } from '@/app/context/CartContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { formatPrice } from '@/lib/formatPrice';
 
 export default function CartPage() {
     const { cart, removeFromCart, getTotalPrice } = useCart();
@@ -39,7 +40,7 @@ export default function CartPage() {
                                         <div>
                                             <h3 className="font-semibold text-lg">{item.name}</h3>
                                             <p className="text-gray-500 text-sm">Cantidad: {item.quantity}</p>
-                                            <p className="font-medium text-primary">${item.price.toFixed(2)}</p>
+                                            <p className="font-medium text-primary">{formatPrice(item.price)}</p>
                                         </div>
                                     </div>
                                     <button
@@ -59,11 +60,11 @@ export default function CartPage() {
                         <h2 className="text-xl font-semibold mb-4">Resumen del Pedido</h2>
                         <div className="flex justify-between mb-2 text-gray-600">
                             <span>Subtotal</span>
-                            <span>${getTotalPrice().toFixed(2)}</span>
+                            <span>{formatPrice(getTotalPrice())}</span>
                         </div>
                         <div className="border-t my-4 pt-4 flex justify-between font-bold text-lg">
                             <span>Total</span>
-                            <span>${getTotalPrice().toFixed(2)}</span>
+                            <span>{formatPrice(getTotalPrice())}</span>
                         </div>
                         <button
                             onClick={() => router.push('/checkout/payment')}

@@ -3,6 +3,7 @@
 import { useCart } from '@/app/context/CartContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { formatPrice } from '@/lib/formatPrice';
 
 export default function CartPage() {
     const { cart, removeFromCart, updateQuantity, getTotalPrice, getTotalItems } = useCart();
@@ -50,7 +51,7 @@ export default function CartPage() {
                             <div className="flex-1">
                                 <h3 className="font-semibold text-lg text-primary mb-1">{item.name}</h3>
                                 <p className="text-sm text-gray-500 mb-2">SKU: {item.sku}</p>
-                                <p className="text-accent font-semibold">${item.price.toFixed(2)}</p>
+                                <p className="text-accent font-semibold">{formatPrice(item.price)}</p>
                             </div>
 
                             {/* Quantity Controls */}
@@ -79,7 +80,7 @@ export default function CartPage() {
                                 </div>
 
                                 <p className="text-lg font-bold text-primary">
-                                    ${(item.price * item.quantity).toFixed(2)}
+                                    {formatPrice(item.price * item.quantity)}
                                 </p>
                             </div>
                         </div>
@@ -94,7 +95,7 @@ export default function CartPage() {
                         <div className="space-y-2 mb-4">
                             <div className="flex justify-between text-gray-600">
                                 <span>Productos ({getTotalItems()})</span>
-                                <span>${getTotalPrice().toFixed(2)}</span>
+                                <span>{formatPrice(getTotalPrice())}</span>
                             </div>
                             <div className="flex justify-between text-gray-600">
                                 <span>Envío</span>
@@ -105,7 +106,7 @@ export default function CartPage() {
                         <div className="border-t pt-4 mb-6">
                             <div className="flex justify-between text-xl font-bold">
                                 <span>Total</span>
-                                <span className="text-accent">${getTotalPrice().toFixed(2)}</span>
+                                <span className="text-accent">{formatPrice(getTotalPrice())}</span>
                             </div>
                         </div>
 

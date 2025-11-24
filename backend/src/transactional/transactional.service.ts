@@ -44,13 +44,24 @@ export class TransactionalService {
                         estado: 'PREPARANDO'
                     }
                 } : undefined,
+                direccionEnvio: data.direccionEnvio ? {
+                    create: {
+                        calle: data.direccionEnvio.calle,
+                        ciudad: data.direccionEnvio.ciudad,
+                        estado: data.direccionEnvio.estado,
+                        codigoPostal: data.direccionEnvio.codigoPostal,
+                        pais: data.direccionEnvio.pais,
+                        metodoPago: data.direccionEnvio.metodoPago as any,
+                        nombreTitular: data.direccionEnvio.nombreTitular,
+                    }
+                } : undefined,
             },
-            include: { items: true, envio: true },
+            include: { items: true, envio: true, direccionEnvio: true },
         });
     }
 
     async findAll(): Promise<Pedido[]> {
-        return this.prisma.pedido.findMany({ include: { items: true, envio: true } });
+        return this.prisma.pedido.findMany({ include: { items: true, envio: true, direccionEnvio: true } });
     }
 
     async findOne(id: string): Promise<Pedido | null> {

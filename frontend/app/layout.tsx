@@ -1,22 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import Navbar from "@/components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-montserrat",
+  weight: ["300", "400", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "E-Business Platform",
-  description: "Solución integral para la gestión operativa y comercial",
+  title: "AetherTech | Descubre el Futuro",
+  description: "Innovación, rendimiento y diseño minimalista. Explora la tecnología de vanguardia.",
 };
 
 export default function RootLayout({
@@ -25,15 +22,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${montserrat.variable} antialiased bg-background text-foreground font-sans`}
       >
-        <CartProvider>
-          <Navbar />
-          {children}
-        </CartProvider>
+        <NotificationProvider>
+          <CartProvider>
+            <Navbar />
+            {children}
+          </CartProvider>
+        </NotificationProvider>
       </body>
     </html>
   );
 }
+

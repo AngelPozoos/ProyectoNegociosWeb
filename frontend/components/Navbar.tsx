@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingCart, FileText, Package, Home, Menu, X } from 'lucide-react';
+import { ShoppingCart, Package, Home, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '@/app/context/CartContext';
 
@@ -24,15 +24,15 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2 group">
-                        <div className="w-10 h-10 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform">
-                            <span className="text-white font-bold text-xl">E</span>
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform shadow-md">
+                            <span className="text-white font-bold text-xl">A</span>
                         </div>
-                        <span className="text-xl font-bold text-slate-900 hidden sm:block">E-Business</span>
+                        <span className="text-xl font-bold text-primary hidden sm:block tracking-tight">AetherTech</span>
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -50,8 +50,8 @@ export default function Navbar() {
                                     className={`
                     flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all relative
                     ${active
-                                            ? 'bg-slate-900 text-white shadow-lg'
-                                            : 'text-gray-700 hover:bg-gray-100 hover:text-slate-900'
+                                            ? 'bg-primary text-white shadow-md'
+                                            : 'text-gray-600 hover:bg-gray-50 hover:text-primary'
                                         }
                   `}
                                 >
@@ -82,7 +82,7 @@ export default function Navbar() {
 
             {/* Mobile Navigation */}
             {mobileMenuOpen && (
-                <div className="md:hidden border-t border-gray-200 bg-white">
+                <div className="md:hidden border-t border-gray-100 bg-white">
                     <div className="px-4 py-3 space-y-1">
                         {navLinks.map((link) => {
                             const Icon = link.icon;
@@ -98,8 +98,8 @@ export default function Navbar() {
                                     className={`
                     flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
                     ${active
-                                            ? 'bg-slate-900 text-white shadow-lg'
-                                            : 'text-gray-700 hover:bg-gray-100'
+                                            ? 'bg-primary text-white shadow-md'
+                                            : 'text-gray-600 hover:bg-gray-50 hover:text-primary'
                                         }
                   `}
                                 >

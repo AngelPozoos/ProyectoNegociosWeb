@@ -91,6 +91,7 @@ model DireccionEnvio {
   codigoPostal String
   pais         String      @default("México")
   metodoPago   MetodoPago
+  nombreTitular String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 }
