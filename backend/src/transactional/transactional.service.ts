@@ -60,8 +60,19 @@ export class TransactionalService {
         });
     }
 
-    async findAll(): Promise<Pedido[]> {
-        return this.prisma.pedido.findMany({ include: { items: true, envio: true, direccionEnvio: true } });
+    async findAll(userId?: string): Promise<Pedido[]> {
+        return this.prisma.pedido.findMany({
+            where: userId ? { usuarioId: userId } : {},
+            include: {
+                items: true,
+                envio: true,
+                direccionEnvio: true,
+                usuario: true
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
     }
 
     async findOne(id: string): Promise<Pedido | null> {

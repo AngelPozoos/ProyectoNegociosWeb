@@ -84,6 +84,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const clearCart = () => {
         setCart([]);
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('cart');
+        }
     };
 
     const getTotalItems = () => {

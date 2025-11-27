@@ -3,7 +3,9 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
 import { NotificationProvider } from "./context/NotificationContext";
+import { AuthProvider } from "./context/AuthContext";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -25,15 +27,18 @@ export default function RootLayout({
     <html lang="es">
       <body
         className={`${montserrat.variable} antialiased bg-background text-foreground font-sans`}
+        suppressHydrationWarning
       >
-        <NotificationProvider>
-          <CartProvider>
-            <Navbar />
-            {children}
-          </CartProvider>
-        </NotificationProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <CartProvider>
+              <Navbar />
+              {children}
+              <Footer />
+            </CartProvider>
+          </NotificationProvider>
+        </AuthProvider>
       </body>
     </html>
   );
 }
-

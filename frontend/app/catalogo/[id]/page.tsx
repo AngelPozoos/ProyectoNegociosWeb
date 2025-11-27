@@ -97,12 +97,12 @@ export default function ProductPage() {
 
     return (
         <>
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-8 md:px-16 lg:px-32 py-8">
                 <Link href="/catalogo" className="text-gray-500 hover:text-primary mb-4 inline-block">&larr; Volver al Catálogo</Link>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-gray-100 rounded-lg aspect-square flex items-center justify-center">
+                    <div className="bg-gray-100 rounded-lg flex items-center justify-center max-w-lg mx-auto h-[500px] w-full">
                         {imageList.length > 0 ? (
-                            <img src={imageList[0]} alt={product.nombre} className="object-cover w-full h-full rounded-lg" />
+                            <img src={imageList[0]} alt={product.nombre} className="object-contain w-full h-full rounded-lg p-6" />
                         ) : (
                             <span className="text-gray-400 text-xl">Sin Imagen</span>
                         )}

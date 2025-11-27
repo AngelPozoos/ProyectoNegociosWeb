@@ -70,19 +70,45 @@ async function main() {
         });
     }
 
-    // Create a test user for checkout
-    const testUser = await prisma.usuario.findUnique({ where: { email: 'test@example.com' } });
-    if (!testUser) {
+    // Create Client User
+    const clientEmail = 'cliente@aether.com';
+    const clientUser = await prisma.usuario.findUnique({ where: { email: clientEmail } });
+    if (!clientUser) {
+        // Simple hash for demo purposes (In production use bcrypt/argon2)
+        const crypto = require('crypto');
+        const salt = crypto.randomBytes(16).toString('hex');
+        const hash = crypto.pbkdf2Sync('cliente123', salt, 1000, 64, 'sha512').toString('hex');
+        const password = `${salt}:${hash}`;
+
         await prisma.usuario.create({
             data: {
-                id: 'test-user-id',
-                email: 'test@example.com',
-                nombre: 'Test User',
-                password: 'hashed_password_here', // In production, use proper hashing
+                email: clientEmail,
+                nombre: 'Cliente Aether',
+                password: password,
                 rol: 'CLIENTE',
             },
         });
-        console.log('Test user created with ID: test-user-id');
+        console.log('Client user created: cliente@aether.com / cliente123');
+    }
+
+    // Create Admin User
+    const adminEmail = 'admin@aether.com';
+    const adminUser = await prisma.usuario.findUnique({ where: { email: adminEmail } });
+    if (!adminUser) {
+        const crypto = require('crypto');
+        const salt = crypto.randomBytes(16).toString('hex');
+        const hash = crypto.pbkdf2Sync('admin123', salt, 1000, 64, 'sha512').toString('hex');
+        const password = `${salt}:${hash}`;
+
+        await prisma.usuario.create({
+            data: {
+                email: adminEmail,
+                nombre: 'Administrador Aether',
+                password: password,
+                rol: 'ADMINISTRADOR',
+            },
+        });
+        console.log('Admin user created: admin@aether.com / admin123');
     }
 
     console.log('Seeding finished.');

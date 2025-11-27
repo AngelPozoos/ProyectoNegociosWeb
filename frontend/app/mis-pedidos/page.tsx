@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
 import api from '@/lib/api';
 import { formatPrice } from '@/lib/formatPrice';
 
@@ -23,8 +24,16 @@ export default function OrdersPage() {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
+    const { user } = useAuth();
+
     useEffect(() => {
-        api.get('/transactional')
+        if (!user) {
+            setLoading(false);
+            return;
+        }
+
+        setLoading(true);
+        api.get(`/transactional?userId=${user.id}`)
             .then((res) => {
                 setOrders(res.data);
                 setLoading(false);
@@ -33,7 +42,7 @@ export default function OrdersPage() {
                 console.error('Failed to fetch orders', err);
                 setLoading(false);
             });
-    }, []);
+    }, [user]);
 
     const handleViewDetails = (orderId: string) => {
         router.push(`/mis-pedidos/${orderId}`);
@@ -43,6 +52,23 @@ export default function OrdersPage() {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="container mx-auto px-6 md:px-12 lg:px-16 py-8 max-w-7xl">
+                <h1 className="text-3xl font-bold mb-10 text-primary">Mis Pedidos</h1>
+                <div className="text-center py-16 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                    <p className="text-gray-600 text-lg mb-6">Inicia sesión para ver tus pedidos.</p>
+                    <button
+                        onClick={() => router.push('/login')}
+                        className="btn btn-primary px-8"
+                    >
+                        Iniciar Sesión
+                    </button>
+                </div>
             </div>
         );
     }

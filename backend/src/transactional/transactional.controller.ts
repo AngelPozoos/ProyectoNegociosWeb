@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Query } from '@nestjs/common';
 import { TransactionalService } from './transactional.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { PayPalService } from './paypal.service';
@@ -16,8 +16,8 @@ export class TransactionalController {
     }
 
     @Get()
-    findAll() {
-        return this.transactionalService.findAll();
+    findAll(@Query('userId') userId?: string) {
+        return this.transactionalService.findAll(userId);
     }
 
     @Get(':id')

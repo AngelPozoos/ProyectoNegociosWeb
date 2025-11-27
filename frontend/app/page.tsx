@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Zap, CreditCard, Truck } from 'lucide-react';
 import FeaturedCarousel from '@/components/FeaturedCarousel';
-import Footer from '@/components/Footer';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -159,9 +158,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

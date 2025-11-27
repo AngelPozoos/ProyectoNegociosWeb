@@ -126,12 +126,6 @@ export default function CardPaymentForm({ onApprove, onError, amount, disabled }
             >
                 {isProcessing ? 'Procesando pago...' : 'Pagar con Tarjeta'}
             </button>
-
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800 space-y-1">
-                <p className="font-semibold">💳 Modo Demostración:</p>
-                <p>Puedes usar cualquier dato de tarjeta.</p>
-                <p>El pago será simulado exitosamente.</p>
-            </div>
         </form>
     );
 }

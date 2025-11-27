@@ -2,14 +2,16 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingCart, Package, Home, Menu, X } from 'lucide-react';
+import { ShoppingCart, Package, Home, Menu, X, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '@/app/context/CartContext';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function Navbar() {
     const pathname = usePathname();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { getTotalItems } = useCart();
+    const { user, logout, isAuthenticated } = useAuth();
 
     const navLinks = [
         { href: '/', label: 'Inicio', icon: Home },
@@ -37,7 +39,7 @@ export default function Navbar() {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-1">
-                        {navLinks.map((link) => {
+                        {!user || user.rol !== 'ADMINISTRADOR' ? navLinks.map((link) => {
                             const Icon = link.icon;
                             const active = isActive(link.href);
                             const isCart = link.href === '/checkout';
@@ -66,7 +68,31 @@ export default function Navbar() {
                                     <span>{link.label}</span>
                                 </Link>
                             );
-                        })}
+                        }) : null}
+
+                        {/* Auth Section */}
+                        {isAuthenticated && user ? (
+                            <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-200">
+                                <span className="text-sm font-medium text-gray-700">
+                                    Bienvenido, <span className="font-bold text-primary">{user.nombre}</span>
+                                </span>
+                                <button
+                                    onClick={logout}
+                                    className="p-2 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                                    title="Cerrar Sesión"
+                                >
+                                    <LogOut className="w-5 h-5" />
+                                </button>
+                            </div>
+                        ) : (
+                            <Link
+                                href="/login"
+                                className="ml-4 flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary/90 transition-all shadow-md"
+                            >
+                                <User className="w-4 h-4" />
+                                <span>Iniciar Sesión</span>
+                            </Link>
+                        )}
                     </div>
 
                     {/* Mobile menu button */}
@@ -84,7 +110,7 @@ export default function Navbar() {
             {mobileMenuOpen && (
                 <div className="md:hidden border-t border-gray-100 bg-white">
                     <div className="px-4 py-3 space-y-1">
-                        {navLinks.map((link) => {
+                        {!user || user.rol !== 'ADMINISTRADOR' ? navLinks.map((link) => {
                             const Icon = link.icon;
                             const active = isActive(link.href);
                             const isCart = link.href === '/checkout';
@@ -114,7 +140,37 @@ export default function Navbar() {
                                     <span>{link.label}</span>
                                 </Link>
                             );
-                        })}
+                        }) : null}
+
+                        {/* Mobile Auth Section */}
+                        <div className="pt-4 mt-4 border-t border-gray-100">
+                            {isAuthenticated && user ? (
+                                <div className="space-y-3">
+                                    <div className="px-4 text-sm font-medium text-gray-700">
+                                        Bienvenido, <span className="font-bold text-primary">{user.nombre}</span>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            logout();
+                                            setMobileMenuOpen(false);
+                                        }}
+                                        className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-all"
+                                    >
+                                        <LogOut className="w-5 h-5" />
+                                        <span>Cerrar Sesión</span>
+                                    </button>
+                                </div>
+                            ) : (
+                                <Link
+                                    href="/login"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary/90 transition-all shadow-md"
+                                >
+                                    <User className="w-5 h-5" />
+                                    <span>Iniciar Sesión</span>
+                                </Link>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

@@ -8,11 +8,14 @@ import api from '@/lib/api';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/formatPrice';
 
+import { useAuth } from '@/app/context/AuthContext';
+
 export default function ShippingPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { cart, getTotalPrice, clearCart } = useCart();
     const { showNotification } = useNotification();
+    const { user } = useAuth();
 
     const [calle, setCalle] = useState('');
     const [ciudad, setCiudad] = useState('');
@@ -64,8 +67,16 @@ export default function ShippingPage() {
         try {
             setLoading(true);
 
+            if (!user) {
+                showNotification({
+                    type: 'error',
+                    title: 'Debes iniciar sesión para completar el pedido',
+                });
+                return;
+            }
+
             const orderData = {
-                userId: 'test-user-id', // Matches test user in seed.ts
+                userId: user.id,
                 items: cart.map(item => ({
                     productId: item.id,
                     price: item.price,
@@ -106,7 +117,9 @@ export default function ShippingPage() {
                 title: '¡Pedido completado con éxito!',
             });
             clearCart();
-            router.push('/mis-pedidos');
+            setTimeout(() => {
+                router.push('/mis-pedidos');
+            }, 1000);
         } catch (error: any) {
             console.error('Order creation failed:', error);
             const errorMessage = error.response?.data?.message || 'Error al crear el pedido';
